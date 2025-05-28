@@ -1,10 +1,9 @@
 class ProtobufAT29 < Formula
   desc "Protocol buffers (Google's data interchange format)"
   homepage "https://protobuf.dev/"
-  url "https://github.com/protocolbuffers/protobuf/releases/download/v29.4/protobuf-29.4.tar.gz"
-  sha256 "6bd9dcc91b17ef25c26adf86db71c67ec02431dc92e9589eaf82e22889230496"
+  url "https://github.com/protocolbuffers/protobuf/releases/download/v29.5/protobuf-29.5.tar.gz"
+  sha256 "a191d2afdd75997ba59f62019425016703daed356a9d92f7425f4741439ae544"
   license "BSD-3-Clause"
-  revision 1
 
   livecheck do
     url :stable
@@ -28,7 +27,7 @@ class ProtobufAT29 < Formula
   deprecate! date: "2026-03-31", because: :versioned_formula
 
   depends_on "cmake" => :build
-  depends_on "abseil"
+  depends_on "abseil@20250127"
   uses_from_macos "zlib"
 
   on_macos do
