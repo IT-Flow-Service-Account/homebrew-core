@@ -122,9 +122,18 @@ class OrTools < Formula
                     "-DOR_PROTO_DLL=", "-DPROTOBUF_USE_DLLS",
                     *shell_output("pkg-config --cflags --libs #{absl_libs.join(" ")}").chomp.split,
                     "-o", "simple_sat_program"
-    # FIXME: This shouldn't be needed, but Copilot seems convinced that there is some sort of mismatch
-    #        between the build-time and run-time Protobuf.
-    ENV.prepend_path "LD_LIBRARY_PATH", Formula["protobuf"].opt_lib if OS.linux? && Hardware::CPU.intel?
+    if OS.linux? && Hardware::CPU.intel?
+      system "ldd", "./simple_sat_program"
+
+      ENV["PROTOBUF_LOG_LEVEL"] = "DEBUG"
+
+      # FIXME: This shouldn't be needed, but Copilot seems convinced that there is some sort of mismatch
+      #        between the build-time and run-time Protobuf.
+      ENV.prepend_path "LD_LIBRARY_PATH", Formula["protobuf"].opt_lib
+
+      ENV.each { |k, v| puts "#{k}=#{v}" }
+    end
+
     system "./simple_sat_program"
   end
 end
