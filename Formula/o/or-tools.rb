@@ -37,15 +37,40 @@ class OrTools < Formula
   uses_from_macos "zlib"
 
   def install
+    # TODO: Report wrong target upstream
+    libscip_files = %w[
+      cmake/check_deps.cmake
+      cmake/docs/cmake.dot
+      cmake/docs/cmake.svg
+      cmake/docs/deps.dot
+      cmake/docs/deps.svg
+      cmake/java.cmake
+      cmake/ortoolsConfig.cmake.in
+      cmake/python.cmake
+      cmake/system_deps.cmake
+      ortools/dotnet/Google.OrTools.runtime.csproj.in
+      ortools/gscip/CMakeLists.txt
+      ortools/linear_solver/CMakeLists.txt
+      ortools/linear_solver/proto_solver/CMakeLists.txt
+      ortools/linear_solver/wrappers/CMakeLists.txt
+      ortools/math_opt/io/CMakeLists.txt
+      ortools/math_opt/solvers/CMakeLists.txt
+    ]
+    inreplace libscip_files, "SCIP::libscip", "libscip"
+
     # FIXME: Upstream enabled Highs support in their binary distribution, but our build fails with it.
-    # FIXME: turned off SCIP, otherwise or-tools fails to build with "Target SCIP::libscip not available."
     args = %w[
       -DUSE_HIGHS=OFF
       -DBUILD_DEPS=OFF
       -DBUILD_SAMPLES=OFF
       -DBUILD_EXAMPLES=OFF
-      -DUSE_SCIP=OFF
+      -DUSE_SCIP=ON
     ]
+
+    # TODO: add the other `BUILD_*=OFF` CMake variables too.
+    #       We add this here to ensure our own Protobuf is always being used.
+    args << "-DBUILD_Protobuf=OFF"
+
     system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
@@ -97,6 +122,9 @@ class OrTools < Formula
                     "-DOR_PROTO_DLL=", "-DPROTOBUF_USE_DLLS",
                     *shell_output("pkg-config --cflags --libs #{absl_libs.join(" ")}").chomp.split,
                     "-o", "simple_sat_program"
+    # FIXME: This shouldn't be needed, but Copilot seems convinced that there is some sort of mismatch
+    #        between the build-time and run-time Protobuf.
+    ENV.prepend_path "LD_LIBRARY_PATH", Formula["protobuf"].opt_lib if OS.linux? && Hardware::CPU.intel?
     system "./simple_sat_program"
   end
 end
