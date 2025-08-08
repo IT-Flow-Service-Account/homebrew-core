@@ -1,5 +1,6 @@
 [
   "abseil",
+  "abseil@20250127",
   "aom",
   "aws-checksums",
   "awscli",
