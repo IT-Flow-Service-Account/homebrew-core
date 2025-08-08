@@ -4,7 +4,7 @@ class Brpc < Formula
   url "https://dlcdn.apache.org/brpc/1.14.1/apache-brpc-1.14.1-src.tar.gz"
   sha256 "ed6e6703122cf294462ffae921c713910594b3b0a26dcfef5357a3dcefcc43d3"
   license "Apache-2.0"
-  revision 1
+  revision 2
   head "https://github.com/apache/brpc.git", branch: "master"
 
   bottle do
@@ -18,7 +18,7 @@ class Brpc < Formula
   end
 
   depends_on "cmake" => :build
-  depends_on "abseil"
+  depends_on "abseil@20250127"
   depends_on "gflags"
   depends_on "gperftools"
   depends_on "leveldb"
